@@ -21,6 +21,6 @@ jobs:
 
       - name: Helm Template Validation
         run: |
-          helm upgrade web-app docker-projects/web-app \
+          helm template web-app docker-projects/web-app \
             -f docker-projects/web-app/values-prod.yaml \
-            --dry-run=client
+            > /dev/null
