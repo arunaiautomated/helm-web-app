@@ -9,36 +9,16 @@ jobs:
   helm-deploy:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+steps:
+  - uses: actions/checkout@v4
 
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: 'v1.29.0'
+  - name: Install Helm
+    uses: azure/setup-helm@v4
 
-      - name: Setup Helm
-        uses: azure/setup-helm@v4
-        with:
-          version: 'v3.14.0'
+  - name: Helm Dry Run (Prod)
+    run: |
+      helm upgrade web-app . -f values-prod.yaml --dry-run
 
-      - name: Configure kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-
-      - name: Helm Lint
-        run: |
-          cd docker-projects/web-app
-          helm lint .
-
-      - name: Helm Dry Run (Prod)
-        run: |
-          cd docker-projects/web-app
-          helm upgrade web-app . -f values-prod.yaml --dry-run
-
-      - name: Helm Deploy (Prod)
-        run: |
-          cd docker-projects/web-app
-          helm upgrade --install web-app . -f values-prod.yaml
+  - name: Helm Deploy (Prod)
+    run: |
+      helm upgrade --install web-app . -f values-prod.yaml
