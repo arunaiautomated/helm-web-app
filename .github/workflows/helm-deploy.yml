@@ -8,7 +8,6 @@ on:
 jobs:
   helm-validate:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -16,21 +15,38 @@ jobs:
         uses: azure/setup-helm@v4
 
       - name: Helm Lint
-        run: |
-          helm lint .
+        run: helm lint .
 
-      - name: Helm Template Validation
+      - name: Helm Template Validation (DEV)
         run: |
           helm template web-app . \
-            -f values-prod.yaml
-- name: DEV – Deploy to Kubernetes
-  run: |
-    mkdir -p ~/.kube
-    echo "${DEV_KUBECONFIG}" > ~/.kube/config
+            -f values-dev.yaml
 
-    helm upgrade --install web-app . \
-      -f values-dev.yaml \
-      --namespace dev \
-      --create-namespace
-  env:
-    DEV_KUBECONFIG: ${{ secrets.DEV_KUBECONFIG }}
+  helm-deploy-dev:
+    needs: helm-validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: DEV – Deploy to Kubernetes
+        run: |
+          mkdir -p ~/.kube
+          echo "${DEV_KUBECONFIG}" > ~/.kube/config
+
+          helm upgrade --install web-app . \
+            -f values-dev.yaml \
+            --namespace dev \
+            --create-namespace
+        env:
+          DEV_KUBECONFIG: ${{ secrets.DEV_KUBECONFIG }}
+
+  helm-deploy-prod:
+    needs: helm-validate
+    runs-on: ubuntu-latest
+    if: false
+    steps:
+      - name: Placeholder
+        run: echo "Prod deployment requires approval"
