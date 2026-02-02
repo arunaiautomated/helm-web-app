@@ -9,16 +9,17 @@ jobs:
   helm-deploy:
     runs-on: ubuntu-latest
 
-steps:
-  - uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  - name: Install Helm
-    uses: azure/setup-helm@v4
+      - name: Install Helm
+        uses: azure/setup-helm@v4
 
-  - name: Helm Dry Run (Prod)
-    run: |
-      helm upgrade web-app . -f values-prod.yaml --dry-run
+      - name: Helm Dry Run (Prod)
+        run: |
+          helm upgrade web-app . -f values-prod.yaml --dry-run
 
-  - name: Helm Deploy (Prod)
-    run: |
-      helm upgrade --install web-app . -f values-prod.yaml
+      - name: Helm Deploy (Prod)
+        run: |
+          helm upgrade --install web-app . -f values-prod.yaml
