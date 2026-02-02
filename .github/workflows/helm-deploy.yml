@@ -23,3 +23,17 @@ jobs:
         run: |
           helm template web-app . \
             -f values-prod.yaml
+helm-deploy-dev:
+  needs: helm-validate
+  runs-on: ubuntu-latest
+
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Helm
+      uses: azure/setup-helm@v4
+
+    - name: DEV – Helm Template (simulate deploy)
+      run: |
+        helm template web-app . \
+          -f values-dev.yaml
