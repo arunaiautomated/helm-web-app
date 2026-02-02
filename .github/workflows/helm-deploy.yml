@@ -6,20 +6,19 @@ on:
       - main
 
 jobs:
-  helm-deploy:
+  helm-validate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      - name: Helm Dry Run (Prod)
+      - name: Helm Lint
         run: |
-          helm upgrade web-app . -f values-prod.yaml --dry-run
+          helm lint .
 
-      - name: Helm Deploy (Prod)
+      - name: Helm Template Validation
         run: |
-          helm upgrade --install web-app . -f values-prod.yaml
+          helm upgrade web-app . -f values-prod.yaml --dry-run=client
