@@ -17,9 +17,9 @@ jobs:
 
       - name: Helm Lint
         run: |
-          helm lint docker-projects/web-app
+          helm lint .
 
       - name: Helm Template Validation
         run: |
-          helm template web-app docker-projects/web-app \
-            -f docker-projects/web-app/values-prod.yaml \
+          helm template web-app . \
+            -f values-prod.yaml
