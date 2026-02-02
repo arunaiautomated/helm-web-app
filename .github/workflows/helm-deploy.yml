@@ -23,17 +23,14 @@ jobs:
         run: |
           helm template web-app . \
             -f values-prod.yaml
-helm-deploy-dev:
-  needs: helm-validate
-  runs-on: ubuntu-latest
+- name: DEV – Deploy to Kubernetes
+  run: |
+    mkdir -p ~/.kube
+    echo "${DEV_KUBECONFIG}" > ~/.kube/config
 
-  steps:
-    - uses: actions/checkout@v4
-
-    - name: Install Helm
-      uses: azure/setup-helm@v4
-
-    - name: DEV – Helm Template (simulate deploy)
-      run: |
-        helm template web-app . \
-          -f values-dev.yaml
+    helm upgrade --install web-app . \
+      -f values-dev.yaml \
+      --namespace dev \
+      --create-namespace
+  env:
+    DEV_KUBECONFIG: ${{ secrets.DEV_KUBECONFIG }}
