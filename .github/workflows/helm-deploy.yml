@@ -23,4 +23,3 @@ jobs:
         run: |
           helm template web-app docker-projects/web-app \
             -f docker-projects/web-app/values-prod.yaml \
-            > /dev/null
